@@ -17,5 +17,9 @@ window.NK_CONFIG = {
   STORAGE_BUCKET:    'productos',
   // Correo que será administrador. Regístrate con este correo para
   // obtener el panel de administración.
-  ADMIN_EMAIL:       'kattyoshum@gmail.com'
+  ADMIN_EMAIL:       'kattyoshum@gmail.com',
+  // Pasarela de pago Gumroad (producto "paga lo que quieras")
+  GUMROAD_URL:       'https://naretkole.gumroad.com/l/pedido',
+  // Correo al que llegan los formularios (vía Netlify Forms)
+  NOTIFY_EMAIL:      'Naretkole@gmail.com'
 };

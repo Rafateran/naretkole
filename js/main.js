@@ -122,10 +122,19 @@
   document.querySelectorAll('form[data-demo]').forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const ok = form.querySelector('.form-ok');
-      form.querySelectorAll('.field, .form-note, .btn').forEach(el => el.style.display='none');
-      if(ok) ok.classList.add('show');
-      else toast('Recibido ✦ Te contactaremos pronto');
+      const showOk = () => {
+        const ok = form.querySelector('.form-ok');
+        form.querySelectorAll('.field, .form-note, .btn').forEach(el => el.style.display='none');
+        if(ok) ok.classList.add('show');
+        else toast('Recibido ✦ Te contactaremos pronto');
+      };
+      if(form.getAttribute('data-netlify') === 'true'){
+        const body = new URLSearchParams(new FormData(form)).toString();
+        fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
+          .then(showOk).catch(showOk);
+      } else {
+        showOk();
+      }
     });
   });
 
