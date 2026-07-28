@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naretkole · Arte Ritual Yoruba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html" class="active">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<header class="hero">
+  <div class="hero-parallax">
+    <div class="hero-layer hero-glow"></div>
+    <div class="hero-layer hero-sigil">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#d4a439" stroke-width="1.2">
+        <circle cx="300" cy="300" r="240"/><circle cx="300" cy="300" r="180"/><circle cx="300" cy="300" r="120"/>
+        <path d="M300 60 L500 300 L300 540 L100 300 Z"/>
+        <path d="M120 120 L480 480 M480 120 L120 480"/>
+        <circle cx="300" cy="60" r="8" fill="#d4a439"/><circle cx="500" cy="300" r="8" fill="#d4a439"/>
+        <circle cx="300" cy="540" r="8" fill="#d4a439"/><circle cx="100" cy="300" r="8" fill="#d4a439"/>
+      </svg>
+    </div>
+  </div>
+  <div class="hero-content">
+    <p class="eyebrow">Casa de Arte Sagrado · Ilé Yoruba</p>
+    <h1>Viste el <em>Ashé</em></h1>
+    <p class="lead">Trajes ceremoniales, coronas y atuendos de santo hechos a mano con pedrería, cauríes y bordados. Cada pieza honra a un Orisha.</p>
+    <div class="hero-btns">
+      <a href="productos.html" class="btn btn-oro">Ver la colección</a>
+      <a href="consultas.html" class="btn btn-ghost">Pedir consulta</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Desliza<span></span></div>
+</header>
+
+<section class="section container">
+  <div class="section-head reveal">
+    <span class="kicker">Nuestra devoción</span>
+    <h2>Hecho para los Orishas</h2>
+    <div class="divider"></div>
+    <p>Trabajamos cada atuendo con los colores, símbolos y energías de la tradición. Piezas únicas para coronaciones, tambores y días de santo.</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar reveal d1"><div class="ico">✦</div><h3>Hecho a mano</h3><p>Bordados, pedrería y cauríes cosidos pieza por pieza en nuestro taller.</p></div>
+    <div class="pillar reveal d2"><div class="ico">☾</div><h3>Por Orisha</h3><p>Colores y elementos fieles a Yemayá, Ochún, Changó, Obatalá y más.</p></div>
+    <div class="pillar reveal d3"><div class="ico">⚚</div><h3>A tu medida</h3><p>Encargos personalizados según tu talla, tu santo y tu ceremonia.</p></div>
+    <div class="pillar reveal d4"><div class="ico">✧</div><h3>Con guía</h3><p>Consultas espirituales para acompañarte antes y después de vestir.</p></div>
+  </div>
+</section>
+
+<section class="strip" style="background-image:url('assets/strip-bg.svg')">
+  <div class="strip-inner reveal">
+    <h2>“La tela también reza”</h2>
+    <p>Cada puntada es una oración. En Naretkole vestimos la fe con arte, para que tu día de santo brille con el respeto que merece.</p>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-head reveal">
+    <span class="kicker">Selección</span>
+    <h2>Piezas destacadas</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="grid">
+    <article class="card reveal d1">
+      <div class="card-media"><span class="card-tag">Yemayá</span><img src="ChatGPT%20Image%2019%20jul%202026%2C%2013_18_04.png" alt="Traje Real Índigo"></div>
+      <div class="card-body"><div class="orisha">Yemayá · Agua</div><h3>Traje Real Índigo</h3>
+        <p>Satén azul con encaje plateado y pedrería.</p>
+        <div class="card-foot"><span class="price">$285</span><button class="card-btn">Reservar</button></div></div>
+    </article>
+    <article class="card reveal d2">
+      <div class="card-media"><span class="card-tag">Ochún</span><img src="ChatGPT%20Image%2019%20jul%202026%2C%2013_18_24.png" alt="Vestido Dorado Ochún"></div>
+      <div class="card-body"><div class="orisha">Ochún · Miel</div><h3>Vestido Dorado Ochún</h3>
+        <p>Dorado con bordado floral y pañuelo a juego.</p>
+        <div class="card-foot"><span class="price">$310</span><button class="card-btn">Reservar</button></div></div>
+    </article>
+    <article class="card reveal d3">
+      <div class="card-media"><span class="card-tag">Changó</span><img src="ChatGPT%20Image%2019%20jul%202026%2C%2013_18_40.png" alt="Guerrero Tigre Rojo"></div>
+      <div class="card-body"><div class="orisha">Changó · Fuego</div><h3>Guerrero Tigre Rojo</h3>
+        <p>Rojo, dorado y cauríes con caídas blancas.</p>
+        <div class="card-foot"><span class="price">$340</span><button class="card-btn">Reservar</button></div></div>
+    </article>
+  </div>
+  <div style="text-align:center; margin-top:46px" class="reveal">
+    <a href="productos.html" class="btn btn-ghost">Ver todos los productos</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <span class="brand-name">Naretkole</span>
+        <p style="margin-top:14px; max-width:340px">Arte ritual Yoruba hecho a mano. Trajes de santo, coronas y encargos personalizados con devoción y detalle.</p>
+      </div>
+      <div><h4>Navega</h4><ul>
+        <li><a href="index.html">Inicio</a></li><li><a href="productos.html">Productos</a></li>
+        <li><a href="consultas.html">Consultas</a></li><li><a href="pedidos.html">Pedidos por encargo</a></li>
+      </ul></div>
+      <div><h4>Contacto</h4><ul>
+        <li>hola@naretkole.com</li><li>WhatsApp: +00 000 000</li><li>Envíos a todo el país</li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

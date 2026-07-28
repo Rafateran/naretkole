@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pago · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div class="section-head reveal" style="margin-bottom:40px">
+    <span class="kicker">Checkout</span>
+    <h2>Finalizar compra</h2>
+    <div class="divider"></div>
+  </div>
+  <div id="payArea"></div>
+</section>
+
+<footer class="footer">
+  <div class="container"><div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé.</div></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var area = document.getElementById('payArea');
+  function render(){
+    var items = NK.cartDetailed();
+    if(!items.length){
+      area.innerHTML = '<div class="empty-cat"><div class="ico">🛒</div><p>No hay nada que pagar.</p>'
+        + '<a href="productos.html" class="btn btn-oro" style="margin-top:16px">Ver productos</a></div>';
+      return;
+    }
+    var u = NK.currentUser();
+    var resumen = items.map(function(it){
+      return '<div class="line"><span>'+it.qty+' × '+it.nombre+'</span><span>'+NK.money(it.subtotal)+'</span></div>';
+    }).join('');
+    area.innerHTML =
+      '<div class="cart-layout"><div class="form-wrap" style="margin:0">'
+      + '<form id="checkoutForm">'
+      + '<h3 style="color:var(--oro-claro);font-family:var(--serif);font-size:26px;margin-bottom:18px">Datos de envío</h3>'
+      + '<div class="form-row"><div class="field"><label>Nombre completo</label><input name="nombre" required value="'+(u?u.nombre:'')+'"></div>'
+      + '<div class="field"><label>Correo</label><input name="email" type="email" required value="'+(u?u.email:'')+'"></div></div>'
+      + '<div class="form-row"><div class="field"><label>Teléfono</label><input name="tel" required></div>'
+      + '<div class="field"><label>Ciudad</label><input name="ciudad" required></div></div>'
+      + '<div class="field full"><label>Dirección de envío</label><input name="dir" required></div>'
+      + '<h3 style="color:var(--oro-claro);font-family:var(--serif);font-size:26px;margin:24px 0 12px">Método de pago</h3>'
+      + '<div class="tag-note">🔒 Pasarela de pago pendiente de configurar. Al confirmar se registra tu pedido y verás la pantalla que luego conectaremos con la pasarela (Stripe, PayPal, Mercado Pago, etc.).</div>'
+      + '<button type="submit" class="btn btn-oro" style="width:100%;justify-content:center">Confirmar y proceder al pago · '+NK.money(NK.cartTotal())+'</button>'
+      + '</form></div>'
+      + '<div class="summary"><h3>Tu pedido</h3>'+resumen
+      + '<div class="line total"><span>Total</span><b>'+NK.money(NK.cartTotal())+'</b></div></div></div>';
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Procesando…';
+      var fd = new FormData(e.target);
+      var datos = { nombre:fd.get('nombre'), email:fd.get('email'), tel:fd.get('tel'), ciudad:fd.get('ciudad'), dir:fd.get('dir') };
+      NK.createOrder(datos).then(function(order){
+      NK.clearCart();
+      if(window.NKUI) NKUI.updateNav();
+      area.innerHTML =
+        '<div class="form-wrap" style="text-align:center">'
+        + '<div style="font-size:54px;margin-bottom:10px">✦</div>'
+        + '<h2 style="color:var(--oro-claro);font-family:var(--serif);font-size:38px">¡Pedido registrado!</h2>'
+        + '<p style="color:var(--hueso-suave);margin:14px 0 6px">Tu número de pedido es</p>'
+        + '<p style="font-family:var(--serif);font-size:28px;color:var(--hueso)">'+order.id+'</p>'
+        + '<p style="color:var(--hueso-suave);margin:18px 0">Total a pagar: <b style="color:var(--oro-claro)">'+NK.money(order.total)+'</b></p>'
+        + '<div class="tag-note" style="max-width:520px;margin:0 auto 22px">Aquí se abrirá la <b>pasarela de pago</b> una vez la configuremos. Por ahora tu pedido queda guardado como “pendiente de pago”.</div>'
+        + '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">'
+        + '<a href="cuenta.html" class="btn btn-oro">Ver mis pedidos</a>'
+        + '<a href="productos.html" class="btn btn-ghost">Seguir comprando</a></div></div>';
+      window.scrollTo({top:0,behavior:'smooth'});
+      }).catch(function(err){ console.warn(err); btn.disabled=false; btn.textContent='Reintentar'; alert('No se pudo registrar el pedido. Intenta de nuevo.'); });
+    });
+  }
+  NK.init().then(render);
+})();
+</script>
+</body>
+</html>

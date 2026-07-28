@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultas · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html" class="active">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div class="section-head reveal">
+    <span class="kicker">Guía espiritual</span>
+    <h2>Consultas</h2>
+    <div class="divider"></div>
+    <p>Acompañamiento con respeto y tradición. Reserva tu espacio y recibe orientación antes de tu ceremonia o día de santo.</p>
+  </div>
+
+  <div class="consulta-grid">
+    <div class="consulta-card reveal d1"><span class="num">01</span><div class="ico">✦</div>
+      <h3>Registro / Consulta</h3><p>Lectura y orientación general sobre tu camino y tu Orisha.</p>
+      <div class="tarifa">desde $40</div></div>
+    <div class="consulta-card reveal d2"><span class="num">02</span><div class="ico">☾</div>
+      <h3>Asesoría de vestuario</h3><p>Te ayudamos a elegir colores, piezas y accesorios para tu día.</p>
+      <div class="tarifa">desde $25</div></div>
+    <div class="consulta-card reveal d3"><span class="num">03</span><div class="ico">⚚</div>
+      <h3>Preparación de ceremonia</h3><p>Acompañamiento completo para coronaciones, tambores y santos.</p>
+      <div class="tarifa">a convenir</div></div>
+  </div>
+
+  <div class="section-head reveal" style="margin-top:90px">
+    <span class="kicker">Reserva</span>
+    <h2>Agenda tu consulta</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="form-wrap reveal">
+    <form data-demo>
+      <div class="form-ok">✦ Gracias. Hemos recibido tu solicitud de consulta y te contactaremos pronto. Ashé.</div>
+      <div class="form-row">
+        <div class="field"><label>Nombre</label><input type="text" required placeholder="Tu nombre"></div>
+        <div class="field"><label>Correo / WhatsApp</label><input type="text" required placeholder="Cómo te contactamos"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Tipo de consulta</label>
+          <select><option>Registro / Consulta</option><option>Asesoría de vestuario</option><option>Preparación de ceremonia</option></select></div>
+        <div class="field"><label>Fecha preferida</label><input type="date"></div>
+      </div>
+      <div class="field full"><label>Cuéntanos tu intención</label><textarea placeholder="¿Qué buscas? ¿Para qué Orisha o ceremonia?"></textarea></div>
+      <div style="text-align:center"><button type="submit" class="btn btn-oro">Enviar solicitud</button></div>
+      <p class="form-note">Respondemos en 24–48 h. Este es un formulario de demostración.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><span class="brand-name">Naretkole</span>
+        <p style="margin-top:14px; max-width:340px">Arte ritual Yoruba hecho a mano. Trajes de santo, coronas y encargos personalizados.</p></div>
+      <div><h4>Navega</h4><ul>
+        <li><a href="index.html">Inicio</a></li><li><a href="productos.html">Productos</a></li>
+        <li><a href="consultas.html">Consultas</a></li><li><a href="pedidos.html">Pedidos por encargo</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li>hola@naretkole.com</li><li>WhatsApp: +00 000 000</li><li>Envíos a todo el país</li></ul></div>
+    </div>
+    <div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

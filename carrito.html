@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrito · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart active">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div class="section-head reveal" style="margin-bottom:40px">
+    <span class="kicker">Tu selección</span>
+    <h2>Carrito de compras</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div id="cartArea"></div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var area = document.getElementById('cartArea');
+  function render(){
+    var items = NK.cartDetailed();
+    if(!items.length){
+      area.innerHTML = '<div class="empty-cat"><div class="ico">🛒</div><p>Tu carrito está vacío.</p>'
+        + '<a href="productos.html" class="btn btn-oro" style="margin-top:18px">Ver productos</a></div>';
+      return;
+    }
+    var rows = items.map(function(it){
+      return '<div class="cart-row" data-id="'+it.id+'">'
+        + '<img src="'+it.img+'" alt="'+it.nombre+'" onerror="this.style.opacity=.25">'
+        + '<div><h4>'+it.nombre+'</h4><div class="unit">'+NK.money(it.precio)+' c/u</div>'
+        + '<div class="qty"><button data-dec>−</button><span>'+it.qty+'</span><button data-inc>+</button></div></div>'
+        + '<div class="right"><div class="subtotal">'+NK.money(it.subtotal)+'</div>'
+        + '<button class="rm" data-rm>Quitar</button></div></div>';
+    }).join('');
+    area.innerHTML = '<div class="cart-layout"><div class="cart-items">'+rows+'</div>'
+      + '<div class="summary"><h3>Resumen</h3>'
+      + '<div class="line"><span>Artículos</span><span>'+NK.cartCount()+'</span></div>'
+      + '<div class="line"><span>Subtotal</span><span>'+NK.money(NK.cartTotal())+'</span></div>'
+      + '<div class="line"><span>Envío</span><span>Se calcula al pagar</span></div>'
+      + '<div class="line total"><span>Total</span><b>'+NK.money(NK.cartTotal())+'</b></div>'
+      + '<a href="pago.html" class="btn btn-oro" style="width:100%;justify-content:center;margin-top:20px">Proceder al pago</a>'
+      + '<a href="productos.html" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px">Seguir comprando</a>'
+      + '</div></div>';
+    area.querySelectorAll('.cart-row').forEach(function(row){
+      var id = row.getAttribute('data-id');
+      var it = items.filter(function(x){return x.id===id;})[0];
+      row.querySelector('[data-inc]').onclick = function(){ NK.setQty(id, it.qty+1); refresh(); };
+      row.querySelector('[data-dec]').onclick = function(){ NK.setQty(id, it.qty-1); refresh(); };
+      row.querySelector('[data-rm]').onclick  = function(){ NK.removeFromCart(id); refresh(); };
+    });
+  }
+  function refresh(){ if(window.NKUI) NKUI.updateNav(); render(); }
+  NK.init().then(render);
+})();
+</script>
+</body>
+</html>

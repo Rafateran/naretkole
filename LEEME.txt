@@ -1,0 +1,74 @@
+NARETKOLE — Guía del sitio y despliegue
+=======================================
+
+CÓMO VER EL SITIO (local)
+-------------------------
+Abre "index.html" con doble clic. Funciona en MODO DEMO (los datos se
+guardan solo en tu navegador). Admin de prueba: admin@naretkole.com / admin123
+
+ARCHIVOS
+--------
+  index / productos / consultas / pedidos / carrito / pago / login / cuenta / admin  (.html)
+  css/styles.css        estilos
+  js/config.js          <-- aquí pegas tus 2 claves de Supabase
+  js/store.js           capa de datos (Supabase o demo, automático)
+  js/app.js             estado de carrito/cuenta en el menú
+  js/main.js            animaciones y parallax
+  supabase-setup.sql    esquema de la base de datos (ejecutar en Supabase)
+  ChatGPT Image ....png  las 11 fotos de productos
+
+
+=====================================================================
+PASAR A MODO REAL (tienda compartida en la nube) — 4 pasos
+=====================================================================
+
+1) CREAR PROYECTO SUPABASE
+   - Entra a https://supabase.com  → New project (plan Free).
+   - Cuando esté listo, ve a: Project Settings → API. Copia:
+       • Project URL
+       • anon public key
+
+2) PEGAR LAS CLAVES
+   - Abre js/config.js y reemplaza:
+       SUPABASE_URL:      'PEGA_TU_PROJECT_URL_AQUI'
+       SUPABASE_ANON_KEY: 'PEGA_TU_ANON_KEY_AQUI'
+     por tus valores. Guarda.
+
+3) CREAR LAS TABLAS
+   - En Supabase → SQL Editor → New query.
+   - Pega TODO el contenido de supabase-setup.sql y pulsa Run.
+   - Esto crea tablas (productos, pedidos, perfiles), seguridad,
+     el almacén de fotos y carga los 11 trajes iniciales.
+
+4) HACERTE ADMINISTRADOR
+   - Abre el sitio → Iniciar sesión → Crear cuenta con TU correo.
+   - En Supabase → SQL Editor, ejecuta (con tu correo):
+       update public.profiles set rol='admin' where email='TU_CORREO';
+   - Vuelve a entrar: ya verás el "Panel admin".
+
+
+=====================================================================
+PUBLICAR EN NETLIFY
+=====================================================================
+Opción rápida (sin GitHub):
+   - Entra a https://app.netlify.com  → "Add new site" → "Deploy manually".
+   - Arrastra la carpeta "Naretkole" completa a la zona de soltar.
+   - En segundos tendrás una URL pública.
+
+Con GitHub (recomendado para actualizar fácil):
+   - Sube esta carpeta a un repositorio de GitHub.
+   - En Netlify: "Add new site" → "Import from Git" → elige el repo.
+   - Build command: (vacío)   ·   Publish directory: /  (la raíz)
+
+Nota: las claves de config.js son públicas por diseño; la seguridad la
+dan las políticas del SQL. No pongas ahí la "service_role key".
+
+
+PASARELA DE PAGO
+----------------
+El checkout (pago.html) registra el pedido y muestra la pantalla lista
+para conectar la pasarela (Stripe, PayPal o Mercado Pago). Cuando elijas
+una, se conecta en ese punto. Los pedidos ya quedan guardados y visibles
+en el Panel admin → Pedidos.
+
+Ashé. — Naretkole

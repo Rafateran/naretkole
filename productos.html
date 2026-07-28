@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productos · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html" class="active">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div class="section-head reveal">
+    <span class="kicker">Colección</span>
+    <h2>Tienda Naretkole</h2>
+    <div class="divider"></div>
+    <p>Elige una categoría y descubre nuestras piezas ceremoniales hechas a mano.</p>
+  </div>
+
+  <div class="subcats reveal">
+    <div class="subcat active" data-cat="todos"><div class="ico">✦</div><h3>Todos</h3><span>Ver todo</span></div>
+    <div class="subcat" data-cat="trajes"><div class="ico">👗</div><h3>Trajes</h3><span>Atuendos de santo</span></div>
+    <div class="subcat" data-cat="quillas"><div class="ico">👑</div><h3>Quillas y Coronas</h3><span>Tocados y coronas</span></div>
+    <div class="subcat" data-cat="mazos"><div class="ico">📿</div><h3>Mazos y Collares</h3><span>Collares y mazos</span></div>
+  </div>
+
+  <div class="grid" id="productGrid"><div class="empty-cat"><div class="ico">✦</div><p>Cargando…</p></div></div>
+
+  <p style="text-align:center; margin-top:40px; color:var(--hueso-suave); font-size:14px" class="reveal">
+    ¿No ves lo que buscas? Hacemos piezas a medida ·
+    <a href="pedidos.html" class="oro" style="text-decoration:underline">Pedir por encargo</a>
+  </p>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><span class="brand-name">Naretkole</span>
+        <p style="margin-top:14px; max-width:340px">Arte ritual Yoruba hecho a mano. Trajes de santo, coronas y encargos personalizados.</p></div>
+      <div><h4>Navega</h4><ul>
+        <li><a href="index.html">Inicio</a></li><li><a href="productos.html">Productos</a></li>
+        <li><a href="consultas.html">Consultas</a></li><li><a href="pedidos.html">Pedidos por encargo</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li>hola@naretkole.com</li><li>WhatsApp: +00 000 000</li><li>Envíos a todo el país</li></ul></div>
+    </div>
+    <div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var grid = document.getElementById('productGrid');
+  var CATN = NK.CATN;
+  var current = 'todos';
+  var all = [];
+
+  function draw(){
+    var items = all.filter(function(p){ return current==='todos' || p.categoria===current; });
+    if(!items.length){
+      grid.innerHTML = '<div class="empty-cat"><div class="ico">✦</div><p>Aún no hay productos en esta categoría.<br>Pronto añadiremos nuevas piezas.</p></div>';
+      return;
+    }
+    grid.innerHTML = items.map(function(p){
+      return '<article class="card reveal in">'
+        + '<div class="card-media"><span class="card-tag">' + (p.orisha || CATN[p.categoria] || '') + '</span>'
+        + '<img src="' + p.img + '" alt="' + p.nombre + '" onerror="this.style.opacity=.25"></div>'
+        + '<div class="card-body"><div class="orisha">' + (CATN[p.categoria]||'') + '</div>'
+        + '<h3>' + p.nombre + '</h3><p>' + (p.descripcion||'') + '</p>'
+        + '<div class="card-foot"><span class="price">' + NK.money(p.precio) + '</span>'
+        + '<button class="card-btn" data-add="' + p.id + '">Añadir 🛒</button></div></div></article>';
+    }).join('');
+    grid.querySelectorAll('[data-add]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var p = all.filter(function(x){ return String(x.id)===b.getAttribute('data-add'); })[0];
+        if(!p) return;
+        NK.addToCart(p, 1);
+        if(window.NKUI) NKUI.updateNav();
+        toast('“' + p.nombre + '” añadido al carrito ✦');
+      });
+    });
+  }
+  function toast(msg){
+    var t = document.querySelector('.toast');
+    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t);
+      Object.assign(t.style,{position:'fixed',bottom:'26px',left:'50%',transform:'translateX(-50%) translateY(20px)',
+        background:'linear-gradient(120deg,#d4a439,#b07227)',color:'#0b0705',padding:'14px 26px',borderRadius:'30px',
+        fontSize:'14px',zIndex:'999',opacity:'0',transition:'.4s',boxShadow:'0 12px 40px rgba(0,0,0,.5)'}); }
+    t.textContent = msg; requestAnimationFrame(function(){ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 2400);
+  }
+
+  document.querySelectorAll('.subcat').forEach(function(s){
+    s.addEventListener('click', function(){
+      document.querySelectorAll('.subcat').forEach(function(x){ x.classList.remove('active'); });
+      s.classList.add('active'); current = s.getAttribute('data-cat'); draw();
+    });
+  });
+
+  NK.init().then(function(){ return NK.getActiveProducts(); }).then(function(list){
+    all = list || [];
+    var h = (location.hash||'').replace('#','');
+    if(h && CATN[h]){ current=h; document.querySelectorAll('.subcat').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-cat')===h); }); }
+    draw();
+  }).catch(function(e){ console.warn(e); grid.innerHTML='<div class="empty-cat"><p>No se pudieron cargar los productos.</p></div>'; });
+})();
+</script>
+</body>
+</html>

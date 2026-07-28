@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi cuenta · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="cuenta.html" class="nav-cta accountLink active">Mi cuenta</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div id="accArea"></div>
+</section>
+
+<footer class="footer">
+  <div class="container"><div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé.</div></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var area = document.getElementById('accArea');
+  function fecha(o){ return o.created_at || o.fecha; }
+
+  NK.init().then(function(){
+    var u = NK.currentUser();
+    if(!u){ window.location.href = 'login.html'; return Promise.reject('noauth'); }
+    return NK.ordersForUser(u.id).then(function(orders){ render(u, orders||[]); });
+  }).catch(function(e){ if(e!=='noauth') console.warn(e); });
+
+  function render(u, orders){
+    var ordersHtml = orders.length ? orders.map(function(o){
+      var items = (o.items||[]).map(function(it){ return it.qty+'× '+it.nombre; }).join(' · ');
+      return '<div class="order-card"><div class="oh"><span class="oid">'+o.id+'</span>'
+        + '<span class="estado">'+String(o.estado||'').replace(/_/g,' ')+'</span></div>'
+        + '<div class="oitems">'+items+'</div>'
+        + '<div class="ot">Total: <b style="color:var(--oro-claro)">'+NK.money(o.total)+'</b> · '
+        + new Date(fecha(o)).toLocaleDateString('es')+'</div></div>';
+    }).join('') : '<div class="empty-cat"><div class="ico">✦</div><p>Aún no tienes pedidos.</p>'
+        + '<a href="productos.html" class="btn btn-oro" style="margin-top:16px">Explorar productos</a></div>';
+
+    area.innerHTML =
+      '<div class="section-head reveal in" style="margin-bottom:36px"><span class="kicker">Portal</span>'
+      + '<h2>Hola, '+u.nombre+'</h2><div class="divider"></div></div>'
+      + '<div style="text-align:center;margin-bottom:40px">'
+      + '<span class="chip-info">✉ '+u.email+'</span>'
+      + '<span class="chip-info">Cliente Naretkole</span>'
+      + '<span class="chip-info" style="cursor:pointer" id="logoutBtn">Cerrar sesión</span></div>'
+      + '<h3 style="color:var(--oro-claro);font-family:var(--serif);font-size:30px;margin-bottom:20px;text-align:center">Mis pedidos</h3>'
+      + '<div style="max-width:760px;margin:0 auto">'+ordersHtml+'</div>';
+
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      NK.logout().then(function(){ window.location.href = 'index.html'; });
+    });
+  }
+})();
+</script>
+</body>
+</html>

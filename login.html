@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar sesión · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink active">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="auth">
+  <div class="hero-parallax" aria-hidden="true">
+    <div class="hero-layer hero-glow"></div>
+    <div class="hero-layer hero-sigil">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#d4a439" stroke-width="1.2">
+        <circle cx="300" cy="300" r="240"/><circle cx="300" cy="300" r="160"/>
+        <path d="M300 60 L500 300 L300 540 L100 300 Z"/><path d="M120 120 L480 480 M480 120 L120 480"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="auth-card reveal">
+    <span class="brand-mark"><span>N</span></span>
+    <h2 id="authTitle">Bienvenido de vuelta</h2>
+    <p class="sub">Entra al portal de Naretkole · Ashé</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-mode="login">Entrar</button>
+      <button class="auth-tab" data-mode="register">Crear cuenta</button>
+    </div>
+
+    <form id="authForm" novalidate>
+      <div class="field" id="nameField" style="display:none">
+        <label>Nombre</label><input type="text" name="name" placeholder="Tu nombre">
+      </div>
+      <div class="field"><label>Correo</label><input type="email" name="email" placeholder="tu@correo.com"></div>
+      <div class="field"><label>Contraseña</label><input type="password" name="password" placeholder="••••••••"></div>
+      <button type="submit" id="authSubmit" class="btn btn-oro" style="width:100%; justify-content:center">Entrar</button>
+      <div class="auth-msg" id="authMsg"></div>
+    </form>
+
+    <p class="auth-alt">Acceso de administrador de prueba:<br><b>admin@naretkole.com</b> · contraseña <b>admin123</b></p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.auth-tab');
+  var form = document.getElementById('authForm');
+  var mode = 'login';
+  NK.init();
+  tabs.forEach(function(t){ t.addEventListener('click', function(){
+    tabs.forEach(function(x){ x.classList.remove('active'); }); t.classList.add('active');
+    mode = t.dataset.mode;
+    document.getElementById('authTitle').textContent = mode==='login' ? 'Bienvenido de vuelta' : 'Únete a la casa';
+    document.getElementById('authSubmit').textContent = mode==='login' ? 'Entrar' : 'Crear cuenta';
+    document.getElementById('nameField').style.display = mode==='login' ? 'none' : 'block';
+  }); });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var msg = document.getElementById('authMsg');
+    var email = form.email.value.trim(), pass = form.password.value.trim();
+    if(!email || !pass){ msg.className='auth-msg err'; msg.textContent='Completa todos los campos.'; return; }
+    if(mode==='register' && pass.length < 4){ msg.className='auth-msg err'; msg.textContent='La contraseña debe tener al menos 4 caracteres.'; return; }
+    var btn = document.getElementById('authSubmit'); btn.disabled = true;
+    msg.className='auth-msg'; msg.textContent='Un momento…';
+    var op = (mode==='login') ? NK.login(email, pass) : NK.register(form.name.value.trim(), email, pass);
+    op.then(function(res){
+      if(res.error){ msg.className='auth-msg err'; msg.textContent=res.error; btn.disabled=false; return; }
+      if(res.info){ msg.className='auth-msg ok'; msg.textContent='✦ '+res.info; btn.disabled=false; return; }
+      msg.className='auth-msg ok'; msg.textContent='✦ Ashé, entrando…';
+      if(window.NKUI) NKUI.updateNav();
+      var dest = (res.user.rol==='admin') ? 'admin.html' : 'cuenta.html';
+      setTimeout(function(){ window.location.href = dest; }, 900);
+    }).catch(function(err){ console.warn(err); msg.className='auth-msg err'; msg.textContent='Error de conexión. Intenta de nuevo.'; btn.disabled=false; });
+  });
+})();
+</script>
+</body>
+</html>

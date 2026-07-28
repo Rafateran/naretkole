@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos por encargo · Naretkole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav class="nav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark"><span>N</span></span>
+    <span class="brand-name">Naretkole<small>ARTE RITUAL YORUBA</small></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Inicio</a>
+    <a href="productos.html">Productos</a>
+    <a href="consultas.html">Consultas</a>
+    <a href="pedidos.html" class="active">Pedidos por encargo</a>
+    <a href="carrito.html" class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></a>
+    <a href="login.html" class="nav-cta accountLink">Iniciar sesión</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section container" style="padding-top:150px">
+  <div class="section-head reveal">
+    <span class="kicker">A tu medida</span>
+    <h2>Pedidos por encargo</h2>
+    <div class="divider"></div>
+    <p>Creamos tu traje único: tu talla, tu santo, tus colores. Cuéntanos tu visión y la hacemos realidad puntada a puntada.</p>
+  </div>
+
+  <div class="pillars reveal" style="margin-bottom:70px">
+    <div class="pillar"><div class="ico">✍</div><h3>1 · Cuéntanos</h3><p>Completa el formulario con tu idea, Orisha y fecha.</p></div>
+    <div class="pillar"><div class="ico">✎</div><h3>2 · Diseño</h3><p>Te enviamos boceto, telas y presupuesto para aprobar.</p></div>
+    <div class="pillar"><div class="ico">✂</div><h3>3 · Confección</h3><p>Bordamos y armamos tu pieza a mano en el taller.</p></div>
+    <div class="pillar"><div class="ico">✦</div><h3>4 · Entrega</h3><p>Prueba final, ajustes y envío listo para tu día.</p></div>
+  </div>
+
+  <div class="form-wrap reveal">
+    <form data-demo>
+      <div class="form-ok">✦ ¡Recibido! Tu encargo llegó a nuestro taller. Te enviaremos un boceto y presupuesto muy pronto. Ashé.</div>
+      <div class="form-row">
+        <div class="field"><label>Nombre</label><input type="text" required placeholder="Tu nombre"></div>
+        <div class="field"><label>Correo / WhatsApp</label><input type="text" required placeholder="Cómo te contactamos"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Orisha / Santo</label>
+          <select><option>Yemayá</option><option>Ochún</option><option>Changó</option><option>Obatalá</option><option>Oyá</option><option>Osain</option><option>Elegguá</option><option>Oggún</option><option>Otro</option></select></div>
+        <div class="field"><label>Tipo de pieza</label>
+          <select><option>Traje completo</option><option>Vestido</option><option>Corona / tocado</option><option>Faja / accesorio</option><option>Conjunto de niño</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Talla</label><input type="text" placeholder="Ej. M, o medidas"></div>
+        <div class="field"><label>Fecha de la ceremonia</label><input type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Colores preferidos</label><input type="text" placeholder="Ej. azul y plata"></div>
+        <div class="field"><label>Presupuesto aprox.</label><input type="text" placeholder="Opcional"></div>
+      </div>
+      <div class="field full"><label>Describe tu visión</label><textarea placeholder="Cuéntanos detalles: bordados, cauríes, pedrería, estilo…"></textarea></div>
+      <div style="text-align:center"><button type="submit" class="btn btn-oro">Solicitar encargo</button></div>
+      <p class="form-note">Los encargos requieren un tiempo de confección de 3–6 semanas. Formulario de demostración.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><span class="brand-name">Naretkole</span>
+        <p style="margin-top:14px; max-width:340px">Arte ritual Yoruba hecho a mano. Trajes de santo, coronas y encargos personalizados.</p></div>
+      <div><h4>Navega</h4><ul>
+        <li><a href="index.html">Inicio</a></li><li><a href="productos.html">Productos</a></li>
+        <li><a href="consultas.html">Consultas</a></li><li><a href="pedidos.html">Pedidos por encargo</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li>hola@naretkole.com</li><li>WhatsApp: +00 000 000</li><li>Envíos a todo el país</li></ul></div>
+    </div>
+    <div class="footer-bottom">© <span class="year"></span> Naretkole · Ashé. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
