@@ -12,8 +12,8 @@
    claves válidas, pasa automáticamente a MODO REAL (compartido).
    ------------------------------------------------------------------ */
 window.NK_CONFIG = {
-  SUPABASE_URL:      'PEGA_TU_PROJECT_URL_AQUI',
-  SUPABASE_ANON_KEY: 'PEGA_TU_ANON_KEY_AQUI',
+  SUPABASE_URL:      'https://ztyhebimsumxhzbhqdow.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_emzNfbWU_7EHk7XAU-6ZJQ_sqGKXhva',
   STORAGE_BUCKET:    'productos',
   // Correo que será administrador. Regístrate con este correo para
   // obtener el panel de administración.
