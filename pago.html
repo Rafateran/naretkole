@@ -12,6 +12,12 @@
 <body>
 <canvas id="stars"></canvas>
 
+<!-- Formulario oculto para que Netlify detecte y envíe los pedidos por email -->
+<form name="pedido" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="nombre"><input name="email"><input name="tel"><input name="ciudad">
+  <input name="dir"><input name="pedido_id"><input name="total"><input name="items"><input name="bot-field">
+</form>
+
 <nav class="nav">
   <a href="index.html" class="brand">
     <img src="logo.png" class="brand-logo" alt="Naretkolé Modas">
@@ -83,6 +89,17 @@
       NK.createOrder(datos).then(function(order){
       NK.clearCart();
       if(window.NKUI) NKUI.updateNav();
+      // Enviar el pedido por email a Naretkolé (Netlify Forms)
+      try {
+        var itemsTxt = (order.items||[]).map(function(it){ return it.qty+'x '+it.nombre; }).join(', ');
+        var payload = new URLSearchParams({ 'form-name':'pedido', nombre:datos.nombre||'', email:datos.email||'',
+          tel:datos.tel||'', ciudad:datos.ciudad||'', dir:datos.dir||'', pedido_id:order.id,
+          total:String(order.total), items:itemsTxt }).toString();
+        fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:payload });
+      } catch(e){ console.warn(e); }
+      var cfg = window.NK_CONFIG || {};
+      var pagoUrl = (cfg.GUMROAD_URL || '#') + '?wanted=true&price=' + Math.round(order.total)
+                  + '&pedido=' + encodeURIComponent(order.id);
       area.innerHTML =
         '<div class="form-wrap" style="text-align:center">'
         + '<div style="font-size:54px;margin-bottom:10px">✦</div>'
@@ -90,11 +107,12 @@
         + '<p style="color:var(--hueso-suave);margin:14px 0 6px">Tu número de pedido es</p>'
         + '<p style="font-family:var(--serif);font-size:28px;color:var(--hueso)">'+order.id+'</p>'
         + '<p style="color:var(--hueso-suave);margin:18px 0">Total a pagar: <b style="color:var(--oro-claro)">'+NK.money(order.total)+'</b></p>'
-        + '<div class="tag-note" style="max-width:520px;margin:0 auto 22px">Aquí se abrirá la <b>pasarela de pago</b> una vez la configuremos. Por ahora tu pedido queda guardado como “pendiente de pago”.</div>'
+        + '<div class="tag-note" style="max-width:520px;margin:0 auto 22px">Te llevamos a la <b>pasarela de pago segura (Gumroad)</b> para completar el pago de tu pedido…</div>'
         + '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">'
-        + '<a href="cuenta.html" class="btn btn-oro">Ver mis pedidos</a>'
-        + '<a href="productos.html" class="btn btn-ghost">Seguir comprando</a></div></div>';
+        + '<a href="'+pagoUrl+'" class="btn btn-oro">Pagar ahora ✦</a>'
+        + '<a href="cuenta.html" class="btn btn-ghost">Ver mis pedidos</a></div></div>';
       window.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(function(){ window.location.href = pagoUrl; }, 3000);
       }).catch(function(err){ console.warn(err); btn.disabled=false; btn.textContent='Reintentar'; alert('No se pudo registrar el pedido. Intenta de nuevo.'); });
     });
   }

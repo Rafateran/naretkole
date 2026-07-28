@@ -54,20 +54,22 @@
   </div>
 
   <div class="form-wrap reveal">
-    <form data-demo>
+    <form data-demo name="consulta" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="consulta">
+      <p hidden><label>No llenar: <input name="bot-field"></label></p>
       <div class="form-ok">✦ Gracias. Hemos recibido tu solicitud de consulta y te contactaremos pronto. Ashé.</div>
       <div class="form-row">
-        <div class="field"><label>Nombre</label><input type="text" required placeholder="Tu nombre"></div>
-        <div class="field"><label>Correo / WhatsApp</label><input type="text" required placeholder="Cómo te contactamos"></div>
+        <div class="field"><label>Nombre</label><input type="text" name="nombre" required placeholder="Tu nombre"></div>
+        <div class="field"><label>Correo / WhatsApp</label><input type="text" name="contacto" required placeholder="Cómo te contactamos"></div>
       </div>
       <div class="form-row">
         <div class="field"><label>Tipo de consulta</label>
-          <select><option>Registro / Consulta</option><option>Asesoría de vestuario</option><option>Preparación de ceremonia</option></select></div>
-        <div class="field"><label>Fecha preferida</label><input type="date"></div>
+          <select name="tipo"><option>Registro / Consulta</option><option>Asesoría de vestuario</option><option>Preparación de ceremonia</option></select></div>
+        <div class="field"><label>Fecha preferida</label><input type="date" name="fecha"></div>
       </div>
-      <div class="field full"><label>Cuéntanos tu intención</label><textarea placeholder="¿Qué buscas? ¿Para qué Orisha o ceremonia?"></textarea></div>
+      <div class="field full"><label>Cuéntanos tu intención</label><textarea name="mensaje" placeholder="¿Qué buscas? ¿Para qué Orisha o ceremonia?"></textarea></div>
       <div style="text-align:center"><button type="submit" class="btn btn-oro">Enviar solicitud</button></div>
-      <p class="form-note">Respondemos en 24–48 h. Este es un formulario de demostración.</p>
+      <p class="form-note">Respondemos en 24–48 h. Tu mensaje llega directo a Naretkolé.</p>
     </form>
   </div>
 </section>

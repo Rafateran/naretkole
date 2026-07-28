@@ -43,29 +43,31 @@
   </div>
 
   <div class="form-wrap reveal">
-    <form data-demo>
+    <form data-demo name="encargo" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="encargo">
+      <p hidden><label>No llenar: <input name="bot-field"></label></p>
       <div class="form-ok">✦ ¡Recibido! Tu encargo llegó a nuestro taller. Te enviaremos un boceto y presupuesto muy pronto. Ashé.</div>
       <div class="form-row">
-        <div class="field"><label>Nombre</label><input type="text" required placeholder="Tu nombre"></div>
-        <div class="field"><label>Correo / WhatsApp</label><input type="text" required placeholder="Cómo te contactamos"></div>
+        <div class="field"><label>Nombre</label><input type="text" name="nombre" required placeholder="Tu nombre"></div>
+        <div class="field"><label>Correo / WhatsApp</label><input type="text" name="contacto" required placeholder="Cómo te contactamos"></div>
       </div>
       <div class="form-row">
         <div class="field"><label>Orisha / Santo</label>
-          <select><option>Yemayá</option><option>Ochún</option><option>Changó</option><option>Obatalá</option><option>Oyá</option><option>Osain</option><option>Elegguá</option><option>Oggún</option><option>Otro</option></select></div>
+          <select name="orisha"><option>Yemayá</option><option>Ochún</option><option>Changó</option><option>Obatalá</option><option>Oyá</option><option>Osain</option><option>Elegguá</option><option>Oggún</option><option>Otro</option></select></div>
         <div class="field"><label>Tipo de pieza</label>
-          <select><option>Traje completo</option><option>Vestido</option><option>Corona / tocado</option><option>Faja / accesorio</option><option>Conjunto de niño</option></select></div>
+          <select name="pieza"><option>Traje completo</option><option>Vestido</option><option>Corona / tocado</option><option>Faja / accesorio</option><option>Conjunto de niño</option></select></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>Talla</label><input type="text" placeholder="Ej. M, o medidas"></div>
-        <div class="field"><label>Fecha de la ceremonia</label><input type="date"></div>
+        <div class="field"><label>Talla</label><input type="text" name="talla" placeholder="Ej. M, o medidas"></div>
+        <div class="field"><label>Fecha de la ceremonia</label><input type="date" name="fecha"></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>Colores preferidos</label><input type="text" placeholder="Ej. azul y plata"></div>
-        <div class="field"><label>Presupuesto aprox.</label><input type="text" placeholder="Opcional"></div>
+        <div class="field"><label>Colores preferidos</label><input type="text" name="colores" placeholder="Ej. azul y plata"></div>
+        <div class="field"><label>Presupuesto aprox.</label><input type="text" name="presupuesto" placeholder="Opcional"></div>
       </div>
-      <div class="field full"><label>Describe tu visión</label><textarea placeholder="Cuéntanos detalles: bordados, cauríes, pedrería, estilo…"></textarea></div>
+      <div class="field full"><label>Describe tu visión</label><textarea name="mensaje" placeholder="Cuéntanos detalles: bordados, cauríes, pedrería, estilo…"></textarea></div>
       <div style="text-align:center"><button type="submit" class="btn btn-oro">Solicitar encargo</button></div>
-      <p class="form-note">Los encargos requieren un tiempo de confección de 3–6 semanas. Formulario de demostración.</p>
+      <p class="form-note">Los encargos requieren un tiempo de confección de 3–6 semanas. Tu solicitud llega directo a Naretkolé.</p>
     </form>
   </div>
 </section>
