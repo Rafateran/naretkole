@@ -287,6 +287,49 @@ html[data-theme="light"] .hero-logo{
 }
 .card-btn:hover{background:var(--oro); color:var(--negro)}
 
+/* ---------- GALERÍA DE PRODUCTO ---------- */
+.product-open{display:block; width:100%; height:100%; padding:0; border:0; background:transparent; cursor:zoom-in}
+.gallery-arrow,.viewer-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:4; display:grid; place-items:center;
+  width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.38);
+  background:rgba(11,7,5,.7); color:#fff; font-size:29px; line-height:1; cursor:pointer; transition:.25s;
+}
+.gallery-arrow:hover,.viewer-arrow:hover{background:var(--oro); color:#0b0705; border-color:var(--oro)}
+.gallery-arrow.prev,.viewer-arrow.prev{left:12px}
+.gallery-arrow.next,.viewer-arrow.next{right:12px}
+.gallery-count,.viewer-count{
+  position:absolute; right:14px; bottom:14px; z-index:4; padding:5px 11px; border-radius:20px;
+  background:rgba(11,7,5,.72); color:#fff; border:1px solid rgba(255,255,255,.25); font-size:11px; letter-spacing:1px;
+}
+.product-lightbox{
+  position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center;
+  padding:24px; background:rgba(0,0,0,.84); backdrop-filter:blur(10px); overflow:auto;
+}
+.product-lightbox.show{display:flex}
+body.gallery-open{overflow:hidden}
+.product-viewer{
+  position:relative; width:min(1120px,100%); max-height:calc(100dvh - 48px); display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(300px,.7fr); overflow:auto;
+  border:1px solid var(--borde-oro); border-radius:24px; background:var(--negro-2); box-shadow:0 30px 90px rgba(0,0,0,.68);
+}
+.viewer-close{
+  position:absolute; top:14px; right:14px; z-index:8; width:42px; height:42px; border-radius:50%;
+  border:1px solid var(--borde-oro); background:rgba(11,7,5,.8); color:#fff; font-size:27px; cursor:pointer;
+}
+.viewer-gallery{min-width:0; padding:20px; background:rgba(0,0,0,.18)}
+.viewer-main{position:relative; display:grid; place-items:center; min-height:520px; height:min(66vh,700px); border-radius:16px; overflow:hidden; background:#efe9df}
+.viewer-main img{width:100%; height:100%; object-fit:contain}
+.viewer-thumbs{display:flex; gap:10px; overflow-x:auto; padding:12px 2px 2px}
+.viewer-thumbs button{width:72px; height:82px; flex:0 0 72px; padding:0; border-radius:10px; overflow:hidden; border:2px solid transparent; background:var(--marron); cursor:pointer; opacity:.62}
+.viewer-thumbs button.active{border-color:var(--oro); opacity:1}
+.viewer-thumbs img{width:100%; height:100%; object-fit:cover}
+.viewer-info{display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:clamp(32px,4vw,54px)}
+.viewer-category{font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--oro); margin-bottom:14px}
+.viewer-info h2{font-size:clamp(34px,4vw,54px); color:var(--hueso)}
+.viewer-info p{color:var(--hueso-suave); margin:18px 0; font-size:16px}
+.viewer-price{font-family:var(--serif); font-size:34px; color:var(--oro-claro); margin-bottom:24px}
+.single-image .viewer-arrow,.single-image .viewer-count,.single-image .viewer-thumbs{display:none}
+
 /* ---------- CONSULTAS ---------- */
 .consulta-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr)); gap:26px}
 .consulta-card{
@@ -438,6 +481,19 @@ html[data-theme="light"] .footer{background:linear-gradient(to bottom,transparen
 .badge-cat{display:inline-block; padding:3px 10px; border-radius:14px; font-size:11px; background:rgba(212,164,57,.15); color:var(--oro-claro); border:1px solid var(--borde-oro)}
 .img-drop{border:1px dashed var(--borde-oro); border-radius:12px; padding:16px; text-align:center; color:var(--hueso-suave); font-size:13px}
 .img-drop img{max-height:140px; margin:10px auto 0; border-radius:8px}
+.img-help{margin-top:8px; color:var(--hueso-suave); font-size:12px}
+.image-preview-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:12px; margin-top:16px}
+.image-empty{grid-column:1/-1; padding:16px; border-radius:10px; background:rgba(212,164,57,.06)}
+.image-preview-item{position:relative; aspect-ratio:1/1.12; overflow:hidden; border-radius:12px; border:1px solid var(--borde-oro); background:var(--negro)}
+.image-preview-item.primary{border-color:var(--oro); box-shadow:0 0 0 2px rgba(212,164,57,.18)}
+.image-preview-item img{width:100%; height:100%; max-height:none; margin:0; object-fit:cover; border-radius:0}
+.primary-badge{position:absolute; left:6px; top:6px; padding:3px 7px; border-radius:10px; background:var(--oro); color:#0b0705; font-size:9px; font-weight:600; text-transform:uppercase}
+.image-preview-actions{position:absolute; right:5px; bottom:5px; display:flex; gap:4px}
+.image-preview-actions button{width:28px; height:28px; display:grid; place-items:center; border-radius:50%; border:1px solid rgba(255,255,255,.32); background:rgba(11,7,5,.82); color:#fff; cursor:pointer; font-size:17px}
+.image-preview-actions button:hover{background:var(--oro); color:#0b0705}
+.admin-cover{position:relative; width:52px}
+.admin-cover img{width:46px; height:56px}
+.admin-cover span{position:absolute; left:28px; bottom:-5px; min-width:max-content; padding:2px 6px; border-radius:8px; background:var(--oro); color:#0b0705; font-size:9px; font-weight:600}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:200; display:none; place-items:center; padding:20px; overflow:auto}
 .modal-bg.show{display:grid}
 .modal{width:min(620px,100%); background:linear-gradient(160deg,var(--marron),var(--negro-2)); border:1px solid var(--oro);
@@ -507,6 +563,9 @@ html[data-theme="light"] .nav-cart .cart-badge{color:#0b0705!important}
   .admin-table{min-width:720px}
   .cart-row{grid-template-columns:76px minmax(0,1fr) auto; gap:12px}
   .cart-row img{width:76px; height:94px}
+  .product-viewer{grid-template-columns:1fr}
+  .viewer-main{min-height:420px; height:56vh}
+  .viewer-info{padding:30px}
 }
 
 @media(max-width:520px){
@@ -536,6 +595,16 @@ html[data-theme="light"] .nav-cart .cart-badge{color:#0b0705!important}
   .grid{gap:20px}
   .card-body{padding:20px}
   .card-foot{gap:12px; flex-wrap:wrap}
+  .gallery-arrow{width:36px; height:36px; font-size:25px}
+  .product-lightbox{padding:0; align-items:stretch}
+  .product-viewer{max-height:100dvh; min-height:100dvh; border-radius:0; border-inline:0}
+  .viewer-gallery{padding:10px; padding-top:60px}
+  .viewer-main{min-height:300px; height:48vh; border-radius:12px}
+  .viewer-close{position:fixed; top:10px; right:12px}
+  .viewer-thumbs button{width:58px; height:66px; flex-basis:58px}
+  .viewer-info{padding:24px 18px 34px}
+  .viewer-info h2{font-size:34px}
+  .viewer-info .btn{width:100%; justify-content:center}
   .form-wrap{padding:22px 16px; border-radius:17px}
   .field input,.field select,.field textarea{font-size:16px}
   .btn{padding:13px 22px}
