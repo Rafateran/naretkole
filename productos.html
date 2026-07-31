@@ -50,6 +50,28 @@
   </p>
 </section>
 
+<div class="product-lightbox" id="productLightbox" aria-hidden="true">
+  <div class="product-viewer" role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+    <button type="button" class="viewer-close" id="viewerClose" aria-label="Cerrar galería">×</button>
+    <div class="viewer-gallery">
+      <div class="viewer-main">
+        <button type="button" class="viewer-arrow prev" data-viewer-step="-1" aria-label="Foto anterior">‹</button>
+        <img id="viewerImage" src="" alt="">
+        <button type="button" class="viewer-arrow next" data-viewer-step="1" aria-label="Foto siguiente">›</button>
+        <span class="viewer-count" id="viewerCount"></span>
+      </div>
+      <div class="viewer-thumbs" id="viewerThumbs"></div>
+    </div>
+    <div class="viewer-info">
+      <span class="viewer-category" id="viewerCategory"></span>
+      <h2 id="viewerTitle"></h2>
+      <p id="viewerDescription"></p>
+      <strong class="viewer-price" id="viewerPrice"></strong>
+      <button type="button" class="btn btn-oro" id="viewerAdd">Añadir al carrito 🛒</button>
+    </div>
+  </div>
+</div>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
@@ -75,6 +97,22 @@
   var CATN = NK.CATN;
   var current = 'todos';
   var all = [];
+  var lightbox = document.getElementById('productLightbox');
+  var viewerImage = document.getElementById('viewerImage');
+  var viewerThumbs = document.getElementById('viewerThumbs');
+  var viewerProduct = null;
+  var viewerImages = [];
+  var viewerIndex = 0;
+  var lastFocus = null;
+
+  function esc(value){
+    return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function findProduct(id){
+    return all.filter(function(x){ return String(x.id)===String(id); })[0];
+  }
 
   function draw(){
     var items = all.filter(function(p){ return current==='todos' || p.categoria===current; });
@@ -83,24 +121,96 @@
       return;
     }
     grid.innerHTML = items.map(function(p){
+      var images = NK.productImages(p), cover = images[0] || 'assets/strip-bg.svg';
       return '<article class="card reveal in">'
-        + '<div class="card-media"><span class="card-tag">' + (p.orisha || CATN[p.categoria] || '') + '</span>'
-        + '<img src="' + p.img + '" alt="' + p.nombre + '" onerror="this.style.opacity=.25"></div>'
-        + '<div class="card-body"><div class="orisha">' + (CATN[p.categoria]||'') + '</div>'
-        + '<h3>' + p.nombre + '</h3><p>' + (p.descripcion||'') + '</p>'
+        + '<div class="card-media"><span class="card-tag">' + esc(p.orisha || CATN[p.categoria] || '') + '</span>'
+        + '<button type="button" class="product-open" data-open-gallery="'+esc(p.id)+'" aria-label="Ver fotos de '+esc(p.nombre)+'">'
+        + '<img src="'+esc(cover)+'" alt="'+esc(p.nombre)+'" onerror="this.style.opacity=.25"></button>'
+        + (images.length>1
+          ? '<button type="button" class="gallery-arrow prev" data-gallery-step="-1" data-product="'+esc(p.id)+'" aria-label="Foto anterior">‹</button>'
+            + '<button type="button" class="gallery-arrow next" data-gallery-step="1" data-product="'+esc(p.id)+'" aria-label="Foto siguiente">›</button>'
+            + '<span class="gallery-count">1 / '+images.length+'</span>'
+          : '')+'</div>'
+        + '<div class="card-body"><div class="orisha">' + esc(CATN[p.categoria]||'') + '</div>'
+        + '<h3>' + esc(p.nombre) + '</h3><p>' + esc(p.descripcion||'') + '</p>'
         + '<div class="card-foot"><span class="price">' + NK.money(p.precio) + '</span>'
-        + '<button class="card-btn" data-add="' + p.id + '">Añadir 🛒</button></div></div></article>';
+        + '<button class="card-btn" data-add="' + esc(p.id) + '">Añadir 🛒</button></div></div></article>';
     }).join('');
     grid.querySelectorAll('[data-add]').forEach(function(b){
       b.addEventListener('click', function(){
-        var p = all.filter(function(x){ return String(x.id)===b.getAttribute('data-add'); })[0];
+        var p = findProduct(b.getAttribute('data-add'));
         if(!p) return;
         NK.addToCart(p, 1);
         if(window.NKUI) NKUI.updateNav();
         toast('“' + p.nombre + '” añadido al carrito ✦');
       });
     });
+    grid.querySelectorAll('[data-open-gallery]').forEach(function(b){
+      b.addEventListener('click',function(){ openViewer(findProduct(b.getAttribute('data-open-gallery')),0,b); });
+    });
+    grid.querySelectorAll('[data-gallery-step]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var p=findProduct(b.getAttribute('data-product')), images=NK.productImages(p);
+        var media=b.closest('.card-media'), image=media.querySelector('.product-open img');
+        var index=parseInt(media.getAttribute('data-index')||'0',10);
+        index=(index+parseInt(b.getAttribute('data-gallery-step'),10)+images.length)%images.length;
+        media.setAttribute('data-index',String(index)); image.src=images[index];
+        media.querySelector('.gallery-count').textContent=(index+1)+' / '+images.length;
+      });
+    });
   }
+
+  function openViewer(product,index,trigger){
+    if(!product) return;
+    viewerProduct=product; viewerImages=NK.productImages(product);
+    if(!viewerImages.length) viewerImages=['assets/strip-bg.svg'];
+    lastFocus=trigger||document.activeElement;
+    document.getElementById('viewerTitle').textContent=product.nombre||'';
+    document.getElementById('viewerCategory').textContent=(CATN[product.categoria]||product.categoria||'')+(product.orisha?' · '+product.orisha:'');
+    document.getElementById('viewerDescription').textContent=product.descripcion||'';
+    document.getElementById('viewerPrice').textContent=NK.money(product.precio);
+    viewerThumbs.innerHTML=viewerImages.map(function(src,i){
+      return '<button type="button" data-viewer-index="'+i+'" aria-label="Ver foto '+(i+1)+'"><img src="'+esc(src)+'" alt=""></button>';
+    }).join('');
+    setViewerIndex(index||0);
+    lightbox.classList.add('show'); lightbox.setAttribute('aria-hidden','false');
+    document.body.classList.add('gallery-open'); document.getElementById('viewerClose').focus();
+  }
+  function closeViewer(){
+    lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true');
+    document.body.classList.remove('gallery-open');
+    if(lastFocus&&lastFocus.focus) lastFocus.focus();
+  }
+  function setViewerIndex(index){
+    if(!viewerImages.length) return;
+    viewerIndex=(index+viewerImages.length)%viewerImages.length;
+    viewerImage.src=viewerImages[viewerIndex];
+    viewerImage.alt=(viewerProduct?viewerProduct.nombre:'Producto')+' · foto '+(viewerIndex+1);
+    document.getElementById('viewerCount').textContent=(viewerIndex+1)+' / '+viewerImages.length;
+    viewerThumbs.querySelectorAll('button').forEach(function(b,i){
+      b.classList.toggle('active',i===viewerIndex); b.setAttribute('aria-current',i===viewerIndex?'true':'false');
+    });
+    lightbox.classList.toggle('single-image',viewerImages.length===1);
+  }
+
+  document.getElementById('viewerClose').addEventListener('click',closeViewer);
+  lightbox.addEventListener('click',function(e){ if(e.target===lightbox) closeViewer(); });
+  lightbox.querySelectorAll('[data-viewer-step]').forEach(function(b){
+    b.addEventListener('click',function(){ setViewerIndex(viewerIndex+parseInt(b.getAttribute('data-viewer-step'),10)); });
+  });
+  viewerThumbs.addEventListener('click',function(e){
+    var b=e.target.closest('[data-viewer-index]'); if(b) setViewerIndex(parseInt(b.getAttribute('data-viewer-index'),10));
+  });
+  document.getElementById('viewerAdd').addEventListener('click',function(){
+    if(!viewerProduct) return; NK.addToCart(viewerProduct,1); if(window.NKUI) NKUI.updateNav();
+    toast('“'+viewerProduct.nombre+'” añadido al carrito ✦');
+  });
+  document.addEventListener('keydown',function(e){
+    if(!lightbox.classList.contains('show')) return;
+    if(e.key==='Escape') closeViewer();
+    if(e.key==='ArrowLeft') setViewerIndex(viewerIndex-1);
+    if(e.key==='ArrowRight') setViewerIndex(viewerIndex+1);
+  });
   function toast(msg){
     var t = document.querySelector('.toast');
     if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t);
