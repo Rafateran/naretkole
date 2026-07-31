@@ -57,11 +57,12 @@
     <form data-demo name="consulta" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="consulta">
       <p hidden><label>No llenar: <input name="bot-field"></label></p>
-      <div class="form-ok">✦ Gracias. Hemos recibido tu solicitud de consulta y te contactaremos pronto. Ashé.</div>
+      <div class="form-ok">✦ Gracias. Hemos recibido tu solicitud de consulta y te responderemos por WhatsApp pronto. Ashé.</div>
       <div class="form-row">
         <div class="field"><label>Nombre</label><input type="text" name="nombre" required placeholder="Tu nombre"></div>
-        <div class="field"><label>Correo / WhatsApp</label><input type="text" name="contacto" required placeholder="Cómo te contactamos"></div>
+        <div class="field"><label>Correo electrónico</label><input type="email" name="email" required placeholder="tu@correo.com"></div>
       </div>
+      <div class="field full"><label>Número de teléfono / WhatsApp</label><input type="tel" name="telefono" required autocomplete="tel" placeholder="Ej. +58 424 000 0000"></div>
       <div class="form-row">
         <div class="field"><label>Tipo de consulta</label>
           <select name="tipo"><option>Registro / Consulta</option><option>Asesoría de vestuario</option><option>Preparación de ceremonia</option></select></div>
@@ -69,7 +70,7 @@
       </div>
       <div class="field full"><label>Cuéntanos tu intención</label><textarea name="mensaje" placeholder="¿Qué buscas? ¿Para qué Orisha o ceremonia?"></textarea></div>
       <div style="text-align:center"><button type="submit" class="btn btn-oro">Enviar solicitud</button></div>
-      <p class="form-note">Respondemos en 24–48 h. Tu mensaje llega directo a Naretkolé.</p>
+      <p class="form-note">Respondemos en 24–48 h vía WhatsApp al número indicado.</p>
     </form>
   </div>
 </section>
