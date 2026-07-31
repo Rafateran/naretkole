@@ -41,7 +41,7 @@
     <button data-tab="pedidos">Pedidos</button>
   </div>
 
-  <div class="tag-note">💾 Modo demo: los productos, fotos y pedidos se guardan en este navegador (localStorage). Al conectar un servidor real, estos datos se migrarán. Las fotos subidas se guardan comprimidas; usa imágenes de menos de ~1&nbsp;MB.</div>
+  <div class="tag-note" id="storageNote">💾 Cargando información de almacenamiento…</div>
 
   <div id="tabProductos"><div style="overflow-x:auto"><table class="admin-table" id="prodTable"></table></div></div>
   <div id="tabPedidos" style="display:none"></div>
@@ -63,10 +63,11 @@
         <div class="field"><label>Orisha / etiqueta</label><input name="orisha" placeholder="Ej. Yemayá (opcional)"></div>
       </div>
       <div class="field full"><label>Descripción</label><textarea name="descripcion" placeholder="Describe la pieza…"></textarea></div>
-      <div class="field full"><label>Foto del producto</label>
+      <div class="field full"><label>Fotos del producto</label>
         <div class="img-drop">
-          <input type="file" id="imgInput" accept="image/*" style="color:var(--hueso-suave)">
-          <div id="imgPreviewWrap"><img id="imgPreview" style="display:none" alt=""></div>
+          <input type="file" id="imgInput" accept="image/*" multiple style="color:var(--hueso-suave)">
+          <p class="img-help">Selecciona varias imágenes a la vez (máximo 8). La primera será la portada.</p>
+          <div id="imgPreviewWrap" class="image-preview-grid" aria-live="polite"></div>
         </div>
       </div>
       <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:10px">
@@ -89,8 +90,30 @@
   var modalBg = document.getElementById('modalBg');
   var form = document.getElementById('prodForm');
   var imgInput = document.getElementById('imgInput');
-  var imgPreview = document.getElementById('imgPreview');
-  var currentImg = '';
+  var imgPreviewWrap = document.getElementById('imgPreviewWrap');
+  var currentImages = [];
+  var MAX_IMAGES = 8;
+
+  function esc(value){
+    return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function renderImagePreviews(){
+    if(!currentImages.length){
+      imgPreviewWrap.innerHTML = '<p class="image-empty">Aún no has añadido fotos.</p>';
+      return;
+    }
+    imgPreviewWrap.innerHTML = currentImages.map(function(src,index){
+      return '<div class="image-preview-item'+(index===0?' primary':'')+'">'
+        + '<img src="'+esc(src)+'" alt="Vista previa '+(index+1)+'">'
+        + (index===0?'<span class="primary-badge">Portada</span>':'')
+        + '<div class="image-preview-actions">'
+        + (index?'<button type="button" data-primary="'+index+'" title="Usar como portada">★</button>':'')
+        + '<button type="button" data-remove-image="'+index+'" title="Eliminar foto">×</button>'
+        + '</div></div>';
+    }).join('');
+  }
 
   var _cache = [];
   function renderProducts(){
@@ -99,9 +122,11 @@
       table.innerHTML =
         '<thead><tr><th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'
         + _cache.map(function(p){
-          return '<tr><td><img src="'+p.img+'" onerror="this.style.opacity=.2"></td>'
-            + '<td>'+p.nombre+'</td>'
-            + '<td><span class="badge-cat">'+(CATN[p.categoria]||p.categoria)+'</span></td>'
+          var images = NK.productImages(p), cover = images[0] || 'assets/strip-bg.svg';
+          return '<tr><td><div class="admin-cover"><img src="'+esc(cover)+'" onerror="this.style.opacity=.2">'
+            + (images.length>1?'<span>'+images.length+' fotos</span>':'')+'</div></td>'
+            + '<td>'+esc(p.nombre)+'</td>'
+            + '<td><span class="badge-cat">'+esc(CATN[p.categoria]||p.categoria)+'</span></td>'
             + '<td>'+NK.money(p.precio)+'</td>'
             + '<td>'+(p.activo!==false?'Activo':'Oculto')+'</td>'
             + '<td><button class="mini" data-edit="'+p.id+'">Editar</button>'
@@ -119,14 +144,14 @@
   }
 
   function openModal(id){
-    form.reset(); currentImg = ''; imgPreview.style.display='none';
+    form.reset(); currentImages = []; renderImagePreviews();
     if(id){
       var p = _cache.filter(function(x){ return String(x.id)===String(id); })[0];
       document.getElementById('modalTitle').textContent = 'Editar producto';
       form.id.value = p.id; form.nombre.value = p.nombre; form.precio.value = p.precio;
       form.categoria.value = p.categoria; form.orisha.value = p.orisha||''; form.descripcion.value = p.descripcion||'';
-      currentImg = p.img || '';
-      if(currentImg){ imgPreview.src = currentImg; imgPreview.style.display='block'; }
+      currentImages = NK.productImages(p);
+      renderImagePreviews();
     } else {
       document.getElementById('modalTitle').textContent = 'Nuevo producto';
       form.id.value = '';
@@ -136,22 +161,45 @@
   function closeModal(){ modalBg.classList.remove('show'); }
 
   imgInput.addEventListener('change', function(){
-    var f = imgInput.files[0]; if(!f) return;
-    var reader = new FileReader();
-    reader.onload = function(){
-      // Redimensiona para no llenar el almacenamiento
-      var img = new Image();
-      img.onload = function(){
-        var max = 900, sc = Math.min(1, max/img.width);
-        var c = document.createElement('canvas');
-        c.width = img.width*sc; c.height = img.height*sc;
-        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-        currentImg = c.toDataURL('image/jpeg', 0.82);
-        imgPreview.src = currentImg; imgPreview.style.display='block';
+    var files = Array.prototype.slice.call(imgInput.files||[]);
+    if(!files.length) return;
+    var available = MAX_IMAGES-currentImages.length;
+    if(available<=0){ alert('Puedes guardar hasta '+MAX_IMAGES+' fotos por producto.'); imgInput.value=''; return; }
+    if(files.length>available){ alert('Solo se añadirán '+available+' foto(s) para respetar el máximo de '+MAX_IMAGES+'.'); files=files.slice(0,available); }
+    Promise.all(files.map(compressImage)).then(function(images){
+      currentImages = currentImages.concat(images); renderImagePreviews(); imgInput.value='';
+    }).catch(function(){ alert('No se pudo procesar una de las imágenes. Intenta con otro archivo.'); });
+  });
+
+  function compressImage(file){
+    return new Promise(function(resolve,reject){
+      var reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = function(){
+        var img = new Image();
+        img.onerror = reject;
+        img.onload = function(){
+          var max = 1200, scale = Math.min(1,max/Math.max(img.width,img.height));
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.max(1,Math.round(img.width*scale));
+          canvas.height = Math.max(1,Math.round(img.height*scale));
+          canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+          resolve(canvas.toDataURL('image/jpeg',.82));
+        };
+        img.src = reader.result;
       };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(f);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  imgPreviewWrap.addEventListener('click',function(e){
+    var remove = e.target.closest('[data-remove-image]');
+    var primary = e.target.closest('[data-primary]');
+    if(remove){ currentImages.splice(parseInt(remove.getAttribute('data-remove-image'),10),1); renderImagePreviews(); }
+    if(primary){
+      var index=parseInt(primary.getAttribute('data-primary'),10), selected=currentImages.splice(index,1)[0];
+      currentImages.unshift(selected); renderImagePreviews();
+    }
   });
 
   form.addEventListener('submit', function(e){
@@ -165,12 +213,13 @@
       orisha: form.orisha.value.trim(),
       descripcion: form.descripcion.value.trim()
     };
-    // Sube la foto solo si es nueva (dataURL). Si no, conserva la actual.
-    var imgStep = (currentImg && currentImg.indexOf('data:')===0)
-      ? NK.uploadImage(currentImg)
-      : Promise.resolve(currentImg || 'assets/strip-bg.svg');
-    imgStep.then(function(url){
-      p.img = url;
+    var imagesToSave = currentImages.length ? currentImages : ['assets/strip-bg.svg'];
+    var imgStep = Promise.all(imagesToSave.map(function(src){
+      return src.indexOf('data:')===0 ? NK.uploadImage(src) : Promise.resolve(src);
+    }));
+    imgStep.then(function(urls){
+      p.imagenes = urls;
+      p.img = urls[0];
       return NK.saveProduct(p);
     }).then(function(){
       saveBtn.disabled = false; saveBtn.textContent = 'Guardar';
@@ -221,6 +270,9 @@
 
   NK.init().then(function(){
     if(!NK.isAdmin()){ window.location.href = 'login.html'; return; }
+    document.getElementById('storageNote').innerHTML = NK.MODE==='real'
+      ? '☁️ Modo conectado: los productos y sus galerías se guardan en la nube. Puedes subir hasta '+MAX_IMAGES+' fotos por producto.'
+      : '💾 Modo demo: los productos y fotos se guardan en este navegador. Usa pocas imágenes ligeras para no llenar el almacenamiento local.';
     renderProducts();
   });
 })();
