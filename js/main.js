@@ -118,7 +118,7 @@
     t._h = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 2600);
   }
 
-  /* ---- Formularios (demo) ---- */
+  /* ---- Formularios Netlify ---- */
   document.querySelectorAll('form[data-demo]').forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -128,10 +128,17 @@
         if(ok) ok.classList.add('show');
         else toast('Recibido ✦ Te contactaremos pronto');
       };
-      if(form.getAttribute('data-netlify') === 'true'){
+      // Netlify elimina `data-netlify` del HTML publicado después de detectar
+      // el formulario. El campo oculto `form-name` sí permanece disponible.
+      const netlifyFormName = form.querySelector('input[name="form-name"]');
+      if(netlifyFormName && netlifyFormName.value){
         const body = new URLSearchParams(new FormData(form)).toString();
         fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
-          .then(showOk).catch(showOk);
+          .then(response => {
+            if(!response.ok) throw new Error('Netlify Forms respondió con ' + response.status);
+            showOk();
+          })
+          .catch(() => toast('No pudimos enviar tu solicitud. Intenta de nuevo.'));
       } else {
         showOk();
       }
