@@ -51,7 +51,7 @@ create table if not exists public.products (
   orisha text,
   precio numeric not null default 0,
   descripcion text,
-  img text,
+  img text, -- URL de portada o arreglo JSON de URLs para una galería
   activo boolean not null default true,
   created_at timestamptz default now()
 );
